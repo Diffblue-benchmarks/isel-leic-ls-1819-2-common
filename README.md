@@ -17,3 +17,12 @@ This is shown in **boldface**.
 ## Heading 2
 
 ### Heading 3
+
+This will include a block of code 
+```
+public class App {
+  public static void main(String[] args) {
+    System.out.println("Hello world");
+  }
+}
+```
