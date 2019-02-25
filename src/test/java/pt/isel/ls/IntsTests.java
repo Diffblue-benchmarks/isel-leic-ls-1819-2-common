@@ -5,6 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class IntsTests {
 
     @Test
@@ -26,7 +30,7 @@ public class IntsTests {
         int[] v = {1, 2, 3};
 
         // Act
-        int ix = Ints.indexOfBinary(v, 0, 3, 4);
+        int ix = Ints.indexOfBinary(v, 0, 2, 4);
 
         // Assert
         assertTrue(ix < 0);
@@ -49,5 +53,17 @@ public class IntsTests {
         int[] v = {2, 2, 2};
         int ix = Ints.indexOfBinary(v, 1, 1, 2);
         assertTrue(ix < 0);
+    }
+
+    @Test
+    public void test_database() {
+        try {
+            String connectionUrl = "jdbc:sqlserver://localhost//sqlexpress;" +
+                    "databaseName=master;Trusted_Connection=True;";
+            Connection con = DriverManager.getConnection(connectionUrl);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        assertTrue(true);
     }
 }
