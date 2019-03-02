@@ -16,3 +16,26 @@ dependencies {
     compile fileTree(dir: 'vendor/main', include: '*.jar')
     testCompile fileTree(dir: 'vendor/test', include: '*.jar')
 }
+
+String db = 'school', host = 'localhost', user = 'postgres'
+
+task dropDb(type:Exec) {
+    commandLine 'dropdb', '--if-exists', '-h', host, '-U', user, db
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+task createDb(type:Exec) {
+    commandLine 'createdb', '-h', host, '-U', user, db
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+createDb.dependsOn(dropDb)
+task initSchema(type:Exec) {
+    commandLine 'psql', '-h', host, '-U', user, '-d', db, '-f', 'src/test/sql/create.sql'
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+initSchema.dependsOn(createDb)
