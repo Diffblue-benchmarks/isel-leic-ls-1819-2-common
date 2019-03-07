@@ -32,7 +32,7 @@ There are two ways to obtain `Connection` instances:
 
 A `DataSource` instance exposes a `getConnection` method, so it can be used as a connection provider.
 To obtain a `DataSource` instance:
-* Directly create an instance of a class that implements the `DataSource` interface (e.g `new `SQLServerDataSource()`).
+* Directly create an instance of a class that implements the `DataSource` interface (e.g `new SQLServerDataSource()`).
 * Set all required properties via _setter_  methods (e.g. `setURL(String)` and `setPassword(String)`).
 
 A call to the `close` method of a connection will also close all statements objects created from that connection.
