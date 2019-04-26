@@ -5,6 +5,9 @@ hs_err_pid*
 .idea
 *.iml
 out
+bin
+.classpath
+.project
 
 # gradle
 .gradle
