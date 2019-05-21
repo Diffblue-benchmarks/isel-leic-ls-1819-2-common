@@ -46,7 +46,6 @@ task printClasspath {
     }
 }
 
-
 String db = 'school', host = 'localhost', user = 'postgres'
 
 task dropDb(type:Exec) {
