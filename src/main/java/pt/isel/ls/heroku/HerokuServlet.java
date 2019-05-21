@@ -58,7 +58,7 @@ public class HerokuServlet extends HttpServlet {
 
             html(
                     head(
-                            title("Heroku example s1819i")
+                            title("Heroku example s1819v")
                     ),
                     body(
                             h(1, t("Heroku example s1819i")),
