@@ -61,7 +61,7 @@ public class HerokuServlet extends HttpServlet {
                             title("Heroku example s1819v")
                     ),
                     body(
-                            h(1, t("Heroku example s1819i")),
+                            h(1, t("Heroku example s1819v")),
                             listTable(students, headers("Número", "Nome"),
                                     s -> Integer.toString(s.getNumber()),
                                     s -> s.getName())
