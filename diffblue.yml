@@ -1,0 +1,326 @@
+buildCmd: sh ./gradlew assemble
+testCmd: true
+lineLength: 4096
+skipVerification: true
+cbmcArguments:
+  # Do not generate coverage comments on generated tests.
+  java-generate-no-comments: true
+phases:
+  -
+  #Phase 0 PRETTY AND SIMPLE - Simple models, quick cover, pretty Tests, Do Not Test Private Method Directly
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 1500
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 1
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [ private ]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # Instrument the file as opposed to the function only
+      cover-only: file
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+  -
+  #Phase 1 PRETTY AND COMPLEX - Standard models, longer run time, pretty tests, Do Not Test Private Method Directly
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: false
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 2
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [ private ]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # instrument the file as opposed to the function only
+      cover-only: file
+  -
+  #Phase 2 Simple and Private Directly
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 1500
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 1
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+      # If the logs contain output of the following then proceed to phase X
+    nextPhase:
+      # If the function is not analysable then do not pass onto the next phase
+      not_analyzed: null
+  -
+  #Phase 3 Complex and Private Directly
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library.
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 3000
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Bound the length of input strings.
+      max-nondet-string-length: 30
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 3
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+  -
+  #Phase 4 EXCEPTIONS
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library.
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Bound the length of input strings.
+      max-nondet-string-length: 30
+      # Add constraint that strings are printable
+      string-printable: false
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: true
+      # Set an upper bound on loop unwinding.
+  -
+    #PHASE 5 Big numbers and less contraints on inputs 
+    timeout: 300
+    cbmcArguments:
+      # Use the standard models library.
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: false
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 100
+      # Bound the length of input strings.
+      max-nondet-string-length: 100
+      # Add constraint that strings are printable
+      string-printable: false
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 6
+units:
+# Target TGF: 170.714285714
+#  >methods=13
+#  >complexity=102
+#  >construction=17.7142857143
+#  >dependency=11.0
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html/Html.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html/Html.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/common/Writable.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/common/Writable.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/http/HttpContent.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/http/HttpContent.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html/HtmlElem.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html/HtmlElem.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/common/CompositeWritable.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/common/CompositeWritable.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html/HtmlText.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html/HtmlText.java
+# Target TGF: 114.0
+#  >methods=5
+#  >complexity=38
+#  >construction=9.0
+#  >dependency=0.333333333333
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/apps/http/todo/ToDoApp.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/apps/http/todo/ToDoApp.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/todo/InMemoryToDoRepository.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/todo/InMemoryToDoRepository.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/todo/ToDo.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/todo/ToDo.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/todo/ToDoRepository.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/todo/ToDoRepository.java
+# Target TGF: 141.75
+#  >methods=2
+#  >complexity=63
+#  >construction=9.0
+#  >dependency=0.25
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/apps/http/FirstHttpServer.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/apps/http/FirstHttpServer.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/apps/http/TimeServlet.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/apps/http/TimeServlet.java
+# Target TGF: 355.821428571
+#  >methods=29
+#  >complexity=223
+#  >construction=35.6785714286
+#  >dependency=20.0
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Dsl.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Dsl.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Element.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Element.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/ListNode.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/ListNode.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Text.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Text.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Prop.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Prop.java
+# Target TGF: 68.7142857143
+#  >methods=6
+#  >complexity=140
+#  >construction=1.89285714286
+#  >dependency=4.0
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Element.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Element.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Attribute.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Attribute.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html2/Node.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html2/Node.java
+# Target TGF: 154.8
+#  >methods=2
+#  >complexity=86
+#  >construction=9.0
+#  >dependency=0.2
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/heroku/HerokuServer.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/heroku/HerokuServer.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/heroku/HerokuServlet.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/heroku/HerokuServlet.java
+# Target TGF: 29.8125
+#  >methods=2
+#  >complexity=53
+#  >construction=2.25
+#  >dependency=0.25
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/http/FormUrlEncoded.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/http/FormUrlEncoded.java
+# Target TGF: 909.0
+#  >methods=3
+#  >complexity=101
+#  >construction=18.0
+#  >dependency=2.0
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/Ints.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/Ints.java
+# Target TGF: 64.9285714286
+#  >methods=4
+#  >complexity=84
+#  >construction=1.39285714286
+#  >dependency=3.0
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/html/HtmlElem.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/html/HtmlElem.java
+   - dir: build/classes/java/main
+     file: pt/isel/ls/common/Writable.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/common/Writable.java
+# Target TGF: 90.0
+#  >methods=3
+#  >complexity=10
+#  >construction=9.0
+#  >dependency=1.0
+ - target:
+   - dir: build/classes/java/main
+     file: pt/isel/ls/App.class
+     sourceDir: src/main/java
+     sourceFile: pt/isel/ls/App.java
